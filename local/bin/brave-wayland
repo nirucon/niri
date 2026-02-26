@@ -1,0 +1,17 @@
+#!/bin/bash
+# ~/.local/bin/brave-wayland
+#
+# Wayland launcher for Brave Browser.
+# Always starts Brave with Wayland/Ozone flags — this script is only ever
+# called from Wayland sessions (niri etc). X11/DWM uses /usr/bin/brave directly.
+#
+# Webapp scripts detect the session at runtime and call either:
+#   brave-wayland  — when WAYLAND_DISPLAY is set
+#   /usr/bin/brave — when running under X11
+
+BRAVE_BIN="/usr/bin/brave"
+
+exec "$BRAVE_BIN" \
+    --ozone-platform=wayland \
+    --enable-features=UseOzonePlatform \
+    "$@"
