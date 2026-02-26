@@ -1,0 +1,15 @@
+#!/bin/bash
+# Smart wrapper för Spotify (CEF/Chromium)
+# Wayland → kör med Ozone
+# X11 → kör normalt
+
+SPOTIFY_BIN="/usr/bin/spotify"
+
+if [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
+    exec "$SPOTIFY_BIN" \
+        --ozone-platform=wayland \
+        --enable-features=UseOzonePlatform \
+        "$@"
+else
+    exec "$SPOTIFY_BIN" "$@"
+fi

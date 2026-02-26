@@ -1,0 +1,22 @@
+#!/bin/bash
+# ~/.local/bin/brave - Smart wrapper för Brave
+#
+# Detekterar automatiskt om vi kör under Wayland eller X11.
+# - Wayland (niri, sway, hyprland...): lägger till --ozone-platform=wayland
+# - X11 (DWM, openbox...): kör brave precis som vanligt
+#
+# Webapp-scripts i ~/.local/bin/ anropar "brave" och får rätt beteende
+# automatiskt i båda miljöerna. Inget behöver ändras i webapp-scripten.
+
+BRAVE_BIN="/usr/bin/brave"
+
+if [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
+    # Wayland-session detekterad
+    exec "$BRAVE_BIN" \
+        --ozone-platform=wayland \
+        --enable-features=UseOzonePlatform \
+        "$@"
+else
+    # X11-session (DWM etc) - kör som vanligt
+    exec "$BRAVE_BIN" "$@"
+fi
