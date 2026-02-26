@@ -57,6 +57,11 @@ if command -v dbus-update-activation-environment >/dev/null 2>&1; then
 fi
 # --------------------------------------
 
-# 5) Start niri with a proper DBus session and log output
+# 5) Force libseat to use logind as the session backend.
+#    Without this, libseat may try the seatd socket which is absent or
+#    inactive, causing niri to panic with "Failed to open session".
+export LIBSEAT_BACKEND=logind
+
+# 6) Start niri with a proper DBus session and log output
 log "Starting: dbus-run-session niri"
 exec dbus-run-session niri >>"$logfile" 2>&1
