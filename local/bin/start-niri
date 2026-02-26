@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ==========================
+# start-niri (safe launcher)
+# ==========================
+
+logfile="$HOME/.local/state/niri/start-niri.log"
+mkdir -p "$(dirname "$logfile")"
+
+log() { printf "%s %s\n" "$(date '+%F %T')" "$*" | tee -a "$logfile" >&2; }
+die() { log "ERROR: $*"; exit 1; }
+
+log "---- start-niri invoked ----"
+log "user=$(id -un) uid=$(id -u) tty=$(tty || echo unknown)"
+log "DISPLAY=${DISPLAY:-}"
+log "WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}"
+log "XDG_SESSION_TYPE=${XDG_SESSION_TYPE:-}"
+log "XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-}"
+
+# 1) Refuse to start inside an existing graphical session
+if [[ -n "${DISPLAY:-}" ]]; then
+  die "DISPLAY is set ($DISPLAY). Run this from a real TTY (Ctrl+Alt+F2/F3), not inside DWM/X."
+fi
+if [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
+  die "WAYLAND_DISPLAY is set ($WAYLAND_DISPLAY). You already have a Wayland session."
+fi
+
+# 2) Require a real TTY (not /dev/pts/*)
+ttydev="$(tty || true)"
+if [[ "$ttydev" == /dev/pts/* ]]; then
+  die "You are on $ttydev (pseudo terminal). Switch to a real TTY (Ctrl+Alt+F2/F3), log in, then run start-niri."
+fi
+if [[ "$ttydev" != /dev/tty* ]]; then
+  die "Unexpected tty device: $ttydev. Start from a real console tty."
+fi
+
+# 3) Ensure runtime dir exists (needed for Wayland sockets)
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+if [[ ! -d "$XDG_RUNTIME_DIR" ]]; then
+  die "XDG_RUNTIME_DIR does not exist: $XDG_RUNTIME_DIR (are you logged in via a real TTY with systemd-logind?)"
+fi
+
+# 4) Avoid leftover sockets/env confusion
+unset DISPLAY WAYLAND_DISPLAY
+
+# ---- Load environment.d variables ----
+if [ -d "$HOME/.config/environment.d" ]; then
+  for f in "$HOME"/.config/environment.d/*.conf; do
+    [ -f "$f" ] && set -a && . "$f" && set +a
+  done
+fi
+
+# Propagate to dbus / systemd user services
+if command -v dbus-update-activation-environment >/dev/null 2>&1; then
+  dbus-update-activation-environment --systemd --all
+fi
+# --------------------------------------
+
+# 5) Start niri with a proper DBus session and log output
+log "Starting: dbus-run-session niri"
+exec dbus-run-session niri >>"$logfile" 2>&1

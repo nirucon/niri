@@ -1,0 +1,8 @@
+#!/bin/sh
+# Smart launcher for Signal: Wayland if we have a Wayland socket, otherwise X11.
+if [ -n "$WAYLAND_DISPLAY" ] && [ -S "${XDG_RUNTIME_DIR}/$WAYLAND_DISPLAY" ]; then
+  export ELECTRON_OZONE_PLATFORM_HINT=wayland
+  exec signal-desktop --ozone-platform=wayland "$@"
+else
+  exec signal-desktop "$@"
+fi

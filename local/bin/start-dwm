@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ==========================
+# start-dwm (safe launcher)
+# ==========================
+
+logfile="$HOME/.local/state/x11/start-dwm.log"
+mkdir -p "$(dirname "$logfile")"
+
+log() { printf "%s %s\n" "$(date '+%F %T')" "$*" | tee -a "$logfile" >&2; }
+die() { log "ERROR: $*"; exit 1; }
+
+log "---- start-dwm invoked ----"
+log "user=$(id -un) uid=$(id -u) tty=$(tty || echo unknown)"
+log "DISPLAY=${DISPLAY:-}"
+log "WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}"
+log "XDG_SESSION_TYPE=${XDG_SESSION_TYPE:-}"
+log "XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-}"
+
+# 1) Refuse to start inside an existing graphical session
+if [[ -n "${DISPLAY:-}" ]]; then
+  die "DISPLAY is set ($DISPLAY). You are already in X. Do not run start-dwm inside DWM."
+fi
+if [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
+  die "WAYLAND_DISPLAY is set ($WAYLAND_DISPLAY). You are in Wayland. Exit it first."
+fi
+
+# 2) Require a real TTY (not /dev/pts/*)
+ttydev="$(tty || true)"
+if [[ "$ttydev" == /dev/pts/* ]]; then
+  die "You are on $ttydev (pseudo terminal). Switch to a real TTY (Ctrl+Alt+F2/F3), log in, then run start-dwm."
+fi
+if [[ "$ttydev" != /dev/tty* ]]; then
+  die "Unexpected tty device: $ttydev. Start from a real console tty."
+fi
+
+# 3) Ensure startx exists
+command -v startx >/dev/null 2>&1 || die "startx not found. Install xorg-xinit (and Xorg) first."
+
+# 4) Start X (uses ~/.xinitrc as usual)
+log "Starting: startx"
+exec startx >>"$logfile" 2>&1
