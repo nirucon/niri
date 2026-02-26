@@ -1,0 +1,52 @@
+/* Wofi - MatteBlack theme */
+
+window {
+  background-color: #0f0f10;
+  color: #a8a8a8;
+  border: 1px solid #2a2a2d;
+}
+
+#input {
+  background-color: #0f0f10;
+  color: #e5e5e5;
+  border: none;
+  border-bottom: 1px solid #3a3a3d;
+  padding: 6px 8px;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 11px;
+}
+
+#inner-box {
+  background-color: #0f0f10;
+}
+
+#outer-box {
+  background-color: #0f0f10;
+  padding: 4px;
+}
+
+#scroll {
+  background-color: #0f0f10;
+}
+
+#text {
+  color: #a8a8a8;
+  padding: 2px 8px;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 11px;
+}
+
+#entry {
+  background-color: transparent;
+  border: none;
+  padding: 2px 0;
+}
+
+#entry:selected {
+  background-color: #3a3a3d;
+  border: none;
+}
+
+#entry:selected #text {
+  color: #e5e5e5;
+}

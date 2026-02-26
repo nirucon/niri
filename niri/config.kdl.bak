@@ -1,0 +1,176 @@
+// ==========================================
+// Niri config - DWM-liknande (MatteBlack)
+// Nicklas Rudolfsson
+// ==========================================
+
+screenshot-path "~/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
+
+input {
+  keyboard {
+    xkb {
+      layout "se"
+    }
+    repeat-delay 300
+    repeat-rate 40
+  }
+  mouse {
+    accel-speed 0.0
+  }
+}
+
+// Layout - gaps och borders likt DWM
+layout {
+  gaps 8
+  center-focused-column "never"
+
+  preset-column-widths {
+    proportion 0.5
+    proportion 0.67
+    proportion 1.0
+  }
+
+  default-column-width { proportion 0.5; }
+
+  focus-ring {
+    width 2
+    active-color "#5a5a60"
+    inactive-color "#2a2a2d"
+  }
+
+  border {
+    off
+  }
+}
+
+// Namngivna workspaces med romerska siffror
+workspace "I"
+workspace "II"
+workspace "III"
+workspace "IV"
+workspace "V"
+workspace "VI"
+workspace "VII"
+workspace "VIII"
+workspace "IX"
+
+spawn-at-startup "waybar"
+spawn-at-startup "mako"
+spawn-at-startup "swaybg" "-c" "#0f0f10"
+
+prefer-no-csd
+
+binds {
+  // ---- Launchers ----
+  Mod+Return       { spawn "alacritty"; }
+  Mod+Shift+Return { spawn "foot"; }
+  Mod+B            { spawn "brave"; }
+  Mod+P            { spawn "wofi" "--show" "drun"; }
+  Mod+Shift+P      { spawn "wofi" "--show" "run"; }
+  Mod+Shift+F      { spawn "pcmanfm"; }
+
+  // ---- Stäng fönster ----
+  Mod+Q { close-window; }
+
+  // ---- Fokusnavigering (DWM: Super+J/K) ----
+  Mod+J { focus-window-down; }
+  Mod+K { focus-window-up; }
+  Mod+H { focus-column-left; }
+  Mod+L { focus-column-right; }
+
+  // Piltangenter som alternativ
+  Mod+Left  { focus-column-left; }
+  Mod+Right { focus-column-right; }
+  Mod+Up    { focus-window-up; }
+  Mod+Down  { focus-window-down; }
+
+  // ---- Flytta fönster (DWM: Super+Shift+J/K) ----
+  Mod+Shift+J { move-window-down; }
+  Mod+Shift+K { move-window-up; }
+  Mod+Shift+H { move-column-left; }
+  Mod+Shift+L { move-column-right; }
+
+  Mod+Shift+Left  { move-column-left; }
+  Mod+Shift+Right { move-column-right; }
+  Mod+Shift+Up    { move-window-up; }
+  Mod+Shift+Down  { move-window-down; }
+
+  // ---- Kolumnbredd (DWM: mfact med H/L - här via preset) ----
+  Mod+Minus { set-column-width "-5%"; }
+  Mod+Equal { set-column-width "+5%"; }
+
+  // ---- Fönsterhöjd ----
+  Mod+Shift+Minus { set-window-height "-5%"; }
+  Mod+Shift+Equal { set-window-height "+5%"; }
+
+  // ---- Fullscreen / Maximera ----
+  Mod+F { maximize-column; }
+  Mod+M { fullscreen-window; }
+  Mod+Shift+Space { toggle-window-floating; }
+  Mod+Space { switch-preset-column-width; }
+
+  // ---- Konsumera/expel (kolumnhantering) ----
+  Mod+C { consume-window-into-column; }
+  Mod+E { expel-window-from-column; }
+
+  // ---- Tab: växla till föregående workspace ----
+  Mod+Tab { focus-workspace-previous; }
+
+  // ---- Workspaces (DWM: Super+1-9) ----
+  Mod+1 { focus-workspace "I"; }
+  Mod+2 { focus-workspace "II"; }
+  Mod+3 { focus-workspace "III"; }
+  Mod+4 { focus-workspace "IV"; }
+  Mod+5 { focus-workspace "V"; }
+  Mod+6 { focus-workspace "VI"; }
+  Mod+7 { focus-workspace "VII"; }
+  Mod+8 { focus-workspace "VIII"; }
+  Mod+9 { focus-workspace "IX"; }
+
+  // ---- Flytta fönster till workspace ----
+  Mod+Shift+1 { move-window-to-workspace "I"; }
+  Mod+Shift+2 { move-window-to-workspace "II"; }
+  Mod+Shift+3 { move-window-to-workspace "III"; }
+  Mod+Shift+4 { move-window-to-workspace "IV"; }
+  Mod+Shift+5 { move-window-to-workspace "V"; }
+  Mod+Shift+6 { move-window-to-workspace "VI"; }
+  Mod+Shift+7 { move-window-to-workspace "VII"; }
+  Mod+Shift+8 { move-window-to-workspace "VIII"; }
+  Mod+Shift+9 { move-window-to-workspace "IX"; }
+
+  // ---- Monitor/output (DWM: Super+Comma/Period) ----
+  Mod+Comma  { focus-monitor-left; }
+  Mod+Period { focus-monitor-right; }
+  Mod+Shift+Comma  { move-window-to-monitor-left; }
+  Mod+Shift+Period { move-window-to-monitor-right; }
+
+  // ---- System / Säkerhet ----
+  Mod+Escape       { spawn "swaylock" "-f" "-c" "000000"; }
+  Mod+Shift+Escape { spawn "systemctl" "suspend"; }
+
+  // ---- Screenshots ----
+  Print       { screenshot; }
+  Shift+Print { screenshot-screen; }
+  Mod+Print   { screenshot-window; }
+
+  // ---- Volym (PipeWire) ----
+  XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+  XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+  XF86AudioMute        { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+  XF86AudioMicMute     { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+
+  // ---- Media ----
+  XF86AudioPlay  { spawn "playerctl" "play-pause"; }
+  XF86AudioPause { spawn "playerctl" "play-pause"; }
+  XF86AudioNext  { spawn "playerctl" "next"; }
+  XF86AudioPrev  { spawn "playerctl" "previous"; }
+
+  // ---- Ljusstyrka ----
+  XF86MonBrightnessUp   { spawn "brightnessctl" "set" "+5%"; }
+  XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
+
+  // ---- Niri-specifikt ----
+  Mod+Shift+Q { quit; }
+
+  // Visa hotkey-overlay
+  Mod+Shift+Slash { show-hotkey-overlay; }
+}

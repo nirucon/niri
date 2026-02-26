@@ -1,0 +1,327 @@
+// ============================================================
+// Niri config by NIRUCON
+// Creator: Nicklas Rudolfsson
+// ============================================================
+
+screenshot-path "~/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
+
+prefer-no-csd
+
+// ------------------------------------------------------------
+// Environment
+// ------------------------------------------------------------
+environment {
+  // GTK theming and accessibility
+  GTK_THEME "Adwaita:dark"
+  // Qt uses Wayland natively
+  QT_QPA_PLATFORM "wayland"
+  QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+  // Electron/Chromium apps use Wayland
+  ELECTRON_OZONE_PLATFORM_HINT "wayland"
+  // Java apps on Wayland
+  _JAVA_AWT_WM_NONREPARENTING "1"
+  NIXOS_OZONE_WL "1"
+}
+
+// ------------------------------------------------------------
+// Input
+// ------------------------------------------------------------
+input {
+  keyboard {
+    xkb {
+      layout "se"
+    }
+    repeat-delay 300
+    repeat-rate 40
+  }
+
+  mouse {
+    accel-speed 0.0
+    accel-profile "flat"
+  }
+
+  touchpad {
+    // Natural scrolling (feel like a phone)
+    natural-scroll
+    // Tap to click
+    tap
+    // Two-finger tap = right click
+    tap-button-map "left-right-middle"
+    // Disable while typing
+    dwt
+    // Three-finger drag (middle click drag)
+    middle-emulation
+    // Scroll method
+    scroll-method "two-finger"
+    accel-speed 0.2
+    accel-profile "adaptive"
+  }
+}
+
+// ------------------------------------------------------------
+// Output (monitor config)
+// ------------------------------------------------------------
+output "eDP-1" {
+   // Laptop internal display (native)
+   mode "1920x1200@60.003"
+   scale 1
+   position x=0 y=0
+ }
+
+// ------------------------------------------------------------
+// Layout / Look & Feel
+// ------------------------------------------------------------
+layout {
+  gaps 20
+  center-focused-column "never"
+
+  preset-column-widths {
+    proportion 0.5
+    proportion 0.67
+    proportion 1.0
+  }
+
+  default-column-width { proportion 0.5; }
+
+  focus-ring {
+    width 1.5
+    active-color "#5a5a60"
+    inactive-color "#2a2a2d"
+  }
+
+  border {
+    off
+  }
+}
+
+// ------------------------------------------------------------
+// Animations
+// Disabled for a snappy, minimal feel.
+// ------------------------------------------------------------
+animations {
+  off
+}
+
+// ------------------------------------------------------------
+// Startup
+// ------------------------------------------------------------
+spawn-at-startup "waybar"
+spawn-at-startup "mako"
+spawn-at-startup "bash" "-lc" "~/.local/bin/niri-wallpaper.sh"
+
+// ------------------------------------------------------------
+// Window Rules
+// ------------------------------------------------------------
+
+// Float common dialog windows
+window-rule {
+  match app-id=r#"^(pavucontrol|nm-connection-editor|blueman-manager|gnome-calculator|galculator)$"#
+  open-floating true
+}
+
+// Float file pickers and save dialogs
+window-rule {
+  match title=r#"^(Open|Save|Save As|File Chooser|Open File|Open Folder).*"#
+  open-floating true
+}
+
+// Float PCManFM when opened as a picker
+window-rule {
+  match app-id="pcmanfm"
+  match title="Open Files"
+  open-floating true
+}
+
+// Float wofi (launcher)
+window-rule {
+  match app-id="wofi"
+  open-floating true
+}
+
+// Float swaylock (shouldn't tile)
+window-rule {
+  match app-id="swaylock"
+  open-floating true
+}
+
+// Float pinentry (GPG password prompts)
+window-rule {
+  match app-id=r#"^pinentry.*"#
+  open-floating true
+}
+
+// ------------------------------------------------------------
+// Keybindings
+// ------------------------------------------------------------
+binds {
+  // =========================
+  // Launchers
+  // =========================
+  Mod+Return       { spawn "alacritty"; }
+  Mod+Shift+Return { spawn "foot"; }
+  Mod+B            { spawn "brave"; }
+  Mod+P            { spawn "wofi" "--show" "drun"; }
+  Mod+Shift+P      { spawn "wofi" "--show" "run"; }
+  Mod+Shift+F      { spawn "pcmanfm"; }
+
+  // =========================
+  // Window management
+  // =========================
+  Mod+Q { close-window; }
+
+  // Focus navigation (DWM-ish)
+  Mod+J { focus-window-down; }
+  Mod+K { focus-window-up; }
+  Mod+H { focus-column-left; }
+  Mod+L { focus-column-right; }
+
+  // Arrow keys as alternative
+  Mod+Left  { focus-column-left; }
+  Mod+Right { focus-column-right; }
+  Mod+Up    { focus-window-up; }
+  Mod+Down  { focus-window-down; }
+
+  // Move windows/columns
+  Mod+Shift+J { move-window-down; }
+  Mod+Shift+K { move-window-up; }
+  Mod+Shift+H { move-column-left; }
+  Mod+Shift+L { move-column-right; }
+
+  Mod+Shift+Left  { move-column-left; }
+  Mod+Shift+Right { move-column-right; }
+  Mod+Shift+Up    { move-window-up; }
+  Mod+Shift+Down  { move-window-down; }
+
+  // Column width
+  Mod+Minus { set-column-width "-5%"; }
+  Mod+Equal { set-column-width "+5%"; }
+
+  // Window height
+  Mod+Shift+Minus { set-window-height "-5%"; }
+  Mod+Shift+Equal { set-window-height "+5%"; }
+
+  // Fullscreen / floating / presets
+  Mod+F            { maximize-column; }
+  Mod+M            { fullscreen-window; }
+  Mod+Shift+Space  { toggle-window-floating; }
+  Mod+Space        { switch-preset-column-width; }
+
+  // Column operations
+  Mod+C { consume-window-into-column; }
+  Mod+E { expel-window-from-column; }
+
+  // Workspace navigation
+  Mod+Tab { focus-workspace-previous; }
+
+  // Workspaces 1-9
+  Mod+1 { focus-workspace 1; }
+  Mod+2 { focus-workspace 2; }
+  Mod+3 { focus-workspace 3; }
+  Mod+4 { focus-workspace 4; }
+  Mod+5 { focus-workspace 5; }
+  Mod+6 { focus-workspace 6; }
+  Mod+7 { focus-workspace 7; }
+  Mod+8 { focus-workspace 8; }
+  Mod+9 { focus-workspace 9; }
+
+  // Send window to workspace
+  Mod+Shift+1 { move-window-to-workspace 1; }
+  Mod+Shift+2 { move-window-to-workspace 2; }
+  Mod+Shift+3 { move-window-to-workspace 3; }
+  Mod+Shift+4 { move-window-to-workspace 4; }
+  Mod+Shift+5 { move-window-to-workspace 5; }
+  Mod+Shift+6 { move-window-to-workspace 6; }
+  Mod+Shift+7 { move-window-to-workspace 7; }
+  Mod+Shift+8 { move-window-to-workspace 8; }
+  Mod+Shift+9 { move-window-to-workspace 9; }
+
+  // Monitor/output
+  Mod+Comma        { focus-monitor-left; }
+  Mod+Period       { focus-monitor-right; }
+  Mod+Shift+Comma  { move-window-to-monitor-left; }
+  Mod+Shift+Period { move-window-to-monitor-right; }
+
+  // System / security
+  Mod+Escape       { spawn "swaylock" "-f" "-c" "000000"; }
+  Mod+Shift+Escape { spawn "systemctl" "suspend"; }
+
+  // Lock screen (cannot be inhibited by fullscreen apps)
+  Super+Alt+L allow-inhibiting=false { spawn "swaylock" "-f" "-c" "000000"; }
+
+  // Screenshots
+  Print       { screenshot; }
+  Shift+Print { screenshot-screen; }
+  Mod+Print   { screenshot-window; }
+
+  // Audio (PipeWire/wpctl)
+  XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+  XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+  XF86AudioMute        { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+  XF86AudioMicMute     { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+
+  // Media
+  XF86AudioPlay  { spawn "playerctl" "play-pause"; }
+  XF86AudioPause { spawn "playerctl" "play-pause"; }
+  XF86AudioNext  { spawn "playerctl" "next"; }
+  XF86AudioPrev  { spawn "playerctl" "previous"; }
+
+  // Brightness
+  XF86MonBrightnessUp   { spawn "brightnessctl" "set" "+5%"; }
+  XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
+
+  // =========================
+  // Overview / layout helpers
+  // =========================
+
+  // Workspace overview
+  Mod+O { toggle-overview; }
+
+  // Toggle tabbed display for current column
+  Mod+W { toggle-column-tabbed-display; }
+
+  // Swap window left/right
+  Mod+Alt+H { swap-window-left; }
+  Mod+Alt+L { swap-window-right; }
+
+  // Preset window heights
+  Mod+Shift+R { switch-preset-window-height; }
+
+  // Expand column to available width
+  Mod+Ctrl+F { expand-column-to-available-width; }
+
+  // Center visible columns
+  Mod+Ctrl+C { center-visible-columns; }
+
+  // =========================
+  // Wallpaper rotation
+  // =========================
+  Mod+Shift+W { spawn "bash" "-lc" "~/.local/bin/niri-wallpaper-rotate.sh"; }
+
+  // =========================
+  // Safety / utility
+  // =========================
+
+  // Toggle keyboard shortcut inhibit
+  Mod+Pause { toggle-keyboard-shortcuts-inhibit; }
+
+  // DPMS control
+  Mod+Shift+BackSpace { power-off-monitors; }
+
+  // Quit niri
+  Mod+Shift+Q { quit; }
+
+  // Hotkey overlay
+  Mod+Shift+Slash { show-hotkey-overlay; }
+  
+  // ------------------------------------------------------------
+  // Monitor cycling (always works, layout independent)
+  // ------------------------------------------------------------
+
+  // Focus next / previous monitor
+  Mod+Ctrl+Period { focus-monitor-next; }
+  Mod+Ctrl+Comma  { focus-monitor-previous; }
+
+  // Move window to next / previous monitor
+  Mod+Ctrl+Shift+Period { move-window-to-monitor-next; }
+  Mod+Ctrl+Shift+Comma  { move-window-to-monitor-previous; }
+}

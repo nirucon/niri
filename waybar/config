@@ -1,0 +1,164 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 30,
+  "spacing": 0,
+  "exclusive": true,
+
+  // Module order mirrors dwm-status.sh left-to-right:
+  // CLIPBOARD | VOLUME | BATTERY | TEMP | WIFI | NEXTCLOUD | BLUETOOTH | MUSIC | UPDATES | DISK | DATE+TIME | TRAY
+  "modules-left": ["niri/workspaces"],
+  "modules-center": ["niri/window"],
+  "modules-right": [
+    "custom/clipboard",
+    "pulseaudio",
+    "battery",
+    "temperature",
+    "network",
+    "custom/nextcloud",
+    "bluetooth",
+    "custom/playerctl",
+    "custom/updates",
+    "disk",
+    "clock",
+    "tray"
+  ],
+
+  // ── LEFT ──────────────────────────────────────────────────────────────────
+
+  "niri/workspaces": {
+    "format": "ᛟ",
+    "sort-by-number": true
+  },
+
+  // ── CENTER ────────────────────────────────────────────────────────────────
+
+  "niri/window": {
+    "max-length": 60,
+    "separate-outputs": true
+  },
+
+  // ── RIGHT ─────────────────────────────────────────────────────────────────
+
+  // Clipboard: mirrors clipboard_part() — icon + optional counts
+  // Requires: ~/.config/waybar/scripts/clipboard.sh
+  "custom/clipboard": {
+    "exec": "$HOME/.config/waybar/scripts/clipboard.sh",
+    "interval": 10,
+    "format": "{}",
+    "tooltip": false
+  },
+
+  // Volume: nf-fa-volume_up U+F028 (sound) / nf-fa-volume_off U+F026 (muted)
+  // Scroll to change volume, click to toggle mute
+  "pulseaudio": {
+    "format": "\uf028 {volume}%",
+    "format-muted": "\uf026 {volume}%",
+    "max-volume": 100,
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-",
+    "tooltip-format": "{desc}"
+  },
+
+  // Battery: nf-fa-battery_full/3/half/1/empty (U+F240–F244), plug U+F1E6 when charging
+  // Thresholds mirror battery_part(): full>=95 good>=75 warning>=35 critical<15
+  "battery": {
+    "interval": 30,
+    "states": {
+      "full":     95,
+      "good":     75,
+      "warning":  35,
+      "critical": 15
+    },
+    "format":          "{icon} {capacity}%",
+    "format-charging": "\uf1e6 {capacity}%",
+    "format-plugged":  "\uf1e6 {capacity}%",
+    "format-icons":    ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"],
+    "tooltip": false
+  },
+
+  // Temperature: nf-fa-microchip U+F2DB normal, fire U+1F525 at critical
+  // critical-threshold matches DWM_STATUS_TEMP_WARN=75
+  "temperature": {
+    "interval": 10,
+    "critical-threshold": 75,
+    "format":          "\uf2db {temperatureC}°C",
+    "format-critical": "🔥 {temperatureC}°C",
+    "tooltip": false
+  },
+
+  // Network: nf-fa-wifi U+F1EB — SSID + signal%, mirrors ssid_part()
+  "network": {
+    "interval": 10,
+    "format-wifi":       "\uf1eb {essid} {signalStrength}%",
+    "format-ethernet":   "\uf0e8 {ifname}",
+    "format-disconnected": "\uf1eb n/a",
+    "tooltip-format-wifi":     "{ifname}: {ipaddr}\nSignal: {signalStrength}%",
+    "tooltip-format-ethernet": "{ifname}: {ipaddr}"
+  },
+
+  // Nextcloud: script outputs cloud icon + status, mirrors nextcloud_part()
+  // Requires: ~/.config/waybar/scripts/nextcloud.sh
+  "custom/nextcloud": {
+    "exec": "$HOME/.config/waybar/scripts/nextcloud.sh",
+    "interval": 15,
+    "format": "{}",
+    "tooltip": false
+  },
+
+  // Bluetooth: nf-fa-bluetooth U+F293 + connected device count
+  "bluetooth": {
+    "format":          "\uf293 {num_connections}",
+    "format-disabled": "",
+    "format-off":      "\uf293 off",
+    "interval": 30,
+    "on-click": "blueman-manager",
+    "tooltip-format": "{controller_alias}\n{num_connections} connected"
+  },
+
+  // Music: script outputs ♫ Artist - Title only when playing, mirrors music_part()
+  // Requires: ~/.config/waybar/scripts/playerctl.sh
+  "custom/playerctl": {
+    "exec": "$HOME/.config/waybar/scripts/playerctl.sh",
+    "interval": 5,
+    "format": "{}",
+    "tooltip": false
+  },
+
+  // Updates: nf-dev-archlinux U+F303 + count, only output when count > 0
+  // interval 900s = 15 min, matches UPDATES_CACHE=900 in dwm-status.sh
+  // Requires: ~/.config/waybar/scripts/updates.sh
+  "custom/updates": {
+    "exec": "$HOME/.config/waybar/scripts/updates.sh",
+    "interval": 900,
+    "format": "{}",
+    "tooltip": false
+  },
+
+  // Disk: warning triangle U+26A0 — hidden by CSS when OK, shown at warning/critical
+  // warning=85% used (15% free), critical=95% used — mirrors DISK_WARN=15
+  "disk": {
+    "interval": 60,
+    "format": "\u26a0 Disk: {percentage_free}%",
+    "path": "/",
+    "states": {
+      "warning":  85,
+      "critical": 95
+    },
+    "tooltip-format": "{used} used of {total} on {path}"
+  },
+
+  // Clock: matches dwm date_part() + time_part() combined — YYYY-MM-DD w:WW | HH:MM
+  "clock": {
+    "interval": 10,
+    "format": "{:%Y-%m-%d w:%V | %H:%M}",
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+  },
+
+  // System tray
+  "tray": {
+    "spacing": 8,
+    "icon-size": 14
+  }
+}

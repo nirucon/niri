@@ -1,0 +1,183 @@
+/* ============================================================
+   Waybar — MatteBlack theme, mirrors DWM status bar style
+   Font: JetBrainsMono Nerd Font Mono (exact fc-list name)
+   ============================================================ */
+
+* {
+  font-family: "JetBrainsMono Nerd Font Mono", monospace;
+  font-size: 12px;
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+window#waybar {
+  background: #0f0f10;
+  color: #a8a8a8;
+}
+
+/* ── Workspaces ──────────────────────────────────────────── */
+
+#workspaces {
+  background: #0f0f10;
+}
+
+#workspaces button {
+  padding: 0 4px;
+  background: transparent;
+  color: #333333;
+  border-bottom: 2px solid transparent;
+}
+
+/* Active / focused workspace — bright with underline */
+#workspaces button.active,
+#workspaces button.focused {
+  color: #e5e5e5;
+  border-bottom: 2px solid #5a5a60;
+}
+
+/* Urgent workspace — red */
+#workspaces button.urgent {
+  color: #cc5555;
+  border-bottom: 2px solid #cc5555;
+}
+
+#workspaces button:hover {
+  background: #1a1a1d;
+  color: #a8a8a8;
+}
+
+/* ── Window title (center) ───────────────────────────────── */
+
+#window {
+  padding: 0 10px;
+  color: #e5e5e5;
+}
+
+/* Hide padding when no window is focused */
+#window.empty {
+  padding: 0;
+  color: transparent;
+}
+
+/* ── Right modules — base style ──────────────────────────
+   All modules share the same muted color and a left border
+   that acts as a separator, matching DWM's " | " separator.
+   ─────────────────────────────────────────────────────── */
+
+#clock,
+#temperature,
+#network,
+#pulseaudio,
+#battery,
+#bluetooth,
+#disk,
+#tray,
+#custom-clipboard,
+#custom-nextcloud,
+#custom-playerctl,
+#custom-updates {
+  padding: 0 8px;
+  color: #a8a8a8;
+  border-left: 1px solid #2a2a2d;
+}
+
+/* First module on the right — no left separator */
+#custom-clipboard {
+  border-left: none;
+}
+
+/* Clock is brighter, like the time portion in DWM bar */
+#clock {
+  color: #e5e5e5;
+}
+
+/* ── Battery states ──────────────────────────────────────── */
+
+#battery.full,
+#battery.good {
+  color: #a8a8a8;
+}
+
+#battery.warning {
+  color: #cccc55;
+}
+
+#battery.critical {
+  color: #cc5555;
+}
+
+/* Green tint when charging or plugged in */
+#battery.charging,
+#battery.plugged {
+  color: #88aa66;
+}
+
+/* ── Temperature ─────────────────────────────────────────── */
+
+#temperature.critical {
+  color: #cc5555;
+}
+
+/* ── Network ─────────────────────────────────────────────── */
+
+#network.disconnected {
+  color: #666666;
+}
+
+/* ── Volume ──────────────────────────────────────────────── */
+
+#pulseaudio.muted {
+  color: #666666;
+}
+
+/* ── Disk — hidden unless warning/critical ───────────────
+   Mirrors DWM disk_part() which only shows when free < 15%.
+   We hide the module visually when state is normal,
+   and show it only when waybar applies .warning/.critical.
+   ─────────────────────────────────────────────────────── */
+
+#disk {
+  /* Normal state: invisible and takes no space */
+  color: transparent;
+  padding: 0;
+  border-left: none;
+  min-width: 0;
+  font-size: 0;
+}
+
+#disk.warning {
+  color: #cccc55;
+  padding: 0 8px;
+  border-left: 1px solid #2a2a2d;
+  font-size: 11px;
+}
+
+#disk.critical {
+  color: #cc5555;
+  padding: 0 8px;
+  border-left: 1px solid #2a2a2d;
+  font-size: 11px;
+}
+
+/* ── Updates — no extra style needed ────────────────────────
+   The script outputs nothing when count=0, so the module
+   naturally disappears. No CSS trick required.
+   ─────────────────────────────────────────────────────── */
+
+/* ── System tray ─────────────────────────────────────────── */
+
+#tray {
+  padding: 0 6px;
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+  color: #cc5555;
+}
