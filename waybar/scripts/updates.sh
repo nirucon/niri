@@ -16,4 +16,4 @@ if command -v yay >/dev/null 2>&1; then
   count=$((count + aur_count))
 fi
 
-[ "$count" -gt 0 ] && echo " $count"
+[ "$count" -gt 0 ] && echo $'\uf303'" $count"
