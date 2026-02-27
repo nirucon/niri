@@ -1,0 +1,57 @@
+### MAKO — NOIR MATTE BLACK
+
+# Position
+anchor=top-right
+margin=16
+padding=14,16
+width=360
+height=140
+max-visible=4
+layer=overlay
+
+# Typography
+font=monospace 11
+text-alignment=left
+
+# Shape
+border-size=1
+border-radius=10
+
+# Matte black palette
+background-color=#0B0C0FDD
+text-color=#E6E6E6FF
+border-color=#1E2026FF
+
+# Progress bar (subtle)
+progress-color=over #2B2F38AA
+
+# Icons
+icons=1
+icon-location=left
+max-icon-size=48
+
+# Behavior
+default-timeout=2000
+ignore-timeout=0
+group-by=app-name
+sort=-time
+
+# Urgency styles
+
+[urgency=low]
+background-color=#090A0DDD
+text-color=#CFCFCFFF
+border-color=#16181EFF
+default-timeout=1800
+
+[urgency=normal]
+background-color=#0B0C0FDD
+text-color=#E6E6E6FF
+border-color=#1E2026FF
+default-timeout=3000
+
+[urgency=critical]
+background-color=#12090BDD
+text-color=#F2F2F2FF
+border-color=#3A1F27FF
+default-timeout=4000
