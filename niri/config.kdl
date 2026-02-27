@@ -163,6 +163,7 @@ binds {
   Mod+P            { spawn "wofi" "--show" "drun"; }
   Mod+Shift+P      { spawn "wofi" "--show" "run"; }
   Mod+Shift+F      { spawn "pcmanfm"; }
+  XF86Display      { spawn "wdisplays"; }
 
   // =========================
   // Window management
