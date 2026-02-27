@@ -5,31 +5,28 @@
   "spacing": 0,
   "exclusive": true,
 
-  // Module order mirrors dwm-status.sh left-to-right:
-  // CLIPBOARD | VOLUME | BATTERY | TEMP | WIFI | NEXTCLOUD | BLUETOOTH | MUSIC | UPDATES | DISK | DATE+TIME | TRAY
+  // MUSIC | VOLUME | BATTERY | TEMP | WIFI | BLUETOOTH | UPDATES | DISK | TRAY | DATE+TIME
   "modules-left": ["niri/workspaces"],
   "modules-center": ["niri/window"],
   "modules-right": [
-    "custom/clipboard",
+    "custom/playerctl",
     "pulseaudio",
     "battery",
     "temperature",
     "network",
-    "custom/nextcloud",
     "bluetooth",
-    "custom/playerctl",
     "custom/updates",
-    "disk",
-    "clock",
-    "tray"
+    "custom/disk",
+    "tray",
+    "clock"
   ],
 
   // ── LEFT ──────────────────────────────────────────────────────────────────
 
   "niri/workspaces": {
-  "format": "{icon}",
-  "sort-by-number": true,
-  "format-icons": {
+   "format": "{icon}",
+   "sort-by-number": true,
+   "format-icons": {
     "1": "ᛜ",
     "2": "ᛚ",
     "3": "ᚾ",
@@ -40,8 +37,8 @@
     "8": "ᛋ",
     "9": "ᚢ",
     "default": "ᛟ"
-  }
-},
+   }
+  },
 
   // ── CENTER ────────────────────────────────────────────────────────────────
 
@@ -51,15 +48,6 @@
   },
 
   // ── RIGHT ─────────────────────────────────────────────────────────────────
-
-  // Clipboard: mirrors clipboard_part() — icon + optional counts
-  // Requires: ~/.config/waybar/scripts/clipboard.sh
-  "custom/clipboard": {
-    "exec": "$HOME/.config/waybar/scripts/clipboard.sh",
-    "interval": 10,
-    "format": "{}",
-    "tooltip": false
-  },
 
   // Volume: nf-fa-volume_up U+F028 (sound) / nf-fa-volume_off U+F026 (muted)
   // Scroll to change volume, click to toggle mute
@@ -110,15 +98,6 @@
     "tooltip-format-ethernet": "{ifname}: {ipaddr}"
   },
 
-  // Nextcloud: script outputs cloud icon + status, mirrors nextcloud_part()
-  // Requires: ~/.config/waybar/scripts/nextcloud.sh
-  "custom/nextcloud": {
-    "exec": "$HOME/.config/waybar/scripts/nextcloud.sh",
-    "interval": 15,
-    "format": "{}",
-    "tooltip": false
-  },
-
   // Bluetooth: nf-fa-bluetooth U+F293 + connected device count
   "bluetooth": {
     "format":          "\uf293 {num_connections}",
@@ -148,17 +127,14 @@
     "tooltip": false
   },
 
-  // Disk: warning triangle U+26A0 — hidden by CSS when OK, shown at warning/critical
-  // warning=85% used (15% free), critical=95% used — mirrors DISK_WARN=15
-  "disk": {
+  // Disk: script — outputtar ingenting när OK, visar varning vid >85% använt
+  // Matchar disk_part() i dwm-status.sh: visas bara vid varning
+  // Requires: ~/.config/waybar/scripts/disk.sh
+  "custom/disk": {
+    "exec": "$HOME/.config/waybar/scripts/disk.sh",
     "interval": 60,
-    "format": "\u26a0 Disk: {percentage_free}%",
-    "path": "/",
-    "states": {
-      "warning":  85,
-      "critical": 95
-    },
-    "tooltip-format": "{used} used of {total} on {path}"
+    "format": "{}",
+    "tooltip": false
   },
 
   // Clock: matches dwm date_part() + time_part() combined — YYYY-MM-DD w:WW | HH:MM
