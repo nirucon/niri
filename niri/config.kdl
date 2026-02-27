@@ -108,6 +108,8 @@ animations {
 spawn-at-startup "waybar"
 spawn-at-startup "mako"
 spawn-at-startup "bash" "-lc" "~/.local/bin/niri-wallpaper.sh"
+spawn-at-startup "bash" "-lc" "sleep 1 && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri"
+spawn-at-startup "/home/niru/.local/bin/niri-idle-start.sh"
 
 // ------------------------------------------------------------
 // Window Rules
@@ -164,7 +166,7 @@ binds {
   Mod+Shift+P      { spawn "wofi" "--show" "run"; }
   Mod+Shift+F      { spawn "pcmanfm"; }
   XF86Display      { spawn "wdisplays"; }
-
+  
   // =========================
   // Window management
   // =========================
