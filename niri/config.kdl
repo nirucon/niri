@@ -8,23 +8,25 @@ screenshot-path "~/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
 prefer-no-csd
 
 // ------------------------------------------------------------
-// Environment
+// Environment Variables
 // ------------------------------------------------------------
 environment {
-  // GTK theming and accessibility
+  // GTK theming — force dark mode
   GTK_THEME "Adwaita:dark"
-  // Qt uses Wayland natively
+  // Qt: use native Wayland backend
   QT_QPA_PLATFORM "wayland"
+  // Qt: disable client-side window decorations on Wayland
   QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
-  // Electron/Chromium apps use Wayland
+  // Electron / Chromium: prefer Wayland rendering
   ELECTRON_OZONE_PLATFORM_HINT "wayland"
-  // Java apps on Wayland
+  // Java AWT: required for correct window reparenting on Wayland
   _JAVA_AWT_WM_NONREPARENTING "1"
+  // NixOS Wayland ozone hint (safe to keep on non-NixOS)
   NIXOS_OZONE_WL "1"
 }
 
 // ------------------------------------------------------------
-// Input
+// Input Devices
 // ------------------------------------------------------------
 input {
   keyboard {
@@ -41,17 +43,17 @@ input {
   }
 
   touchpad {
-    // Natural scrolling (feel like a phone)
+    // Natural scrolling direction (content follows finger)
     natural-scroll
-    // Tap to click
+    // Enable tap-to-click
     tap
-    // Two-finger tap = right click
+    // Two-finger tap = right-click, three-finger tap = middle-click
     tap-button-map "left-right-middle"
-    // Disable while typing
+    // Disable touchpad while typing
     dwt
-    // Three-finger drag (middle click drag)
+    // Emulate middle-click via three-finger press
     middle-emulation
-    // Scroll method
+    // Use two-finger scrolling
     scroll-method "two-finger"
     accel-speed 0.2
     accel-profile "adaptive"
@@ -59,17 +61,17 @@ input {
 }
 
 // ------------------------------------------------------------
-// Output (monitor config)
+// Output / Monitor Configuration
 // ------------------------------------------------------------
 output "eDP-1" {
-   // Laptop internal display (native)
-   mode "1920x1200@60.003"
-   scale 1
-   position x=0 y=0
- }
+  // Laptop internal display — native resolution and refresh rate
+  mode "1920x1200@60.003"
+  scale 1
+  position x=0 y=0
+}
 
 // ------------------------------------------------------------
-// Layout / Look & Feel
+// Layout and Appearance
 // ------------------------------------------------------------
 layout {
   gaps 20
@@ -103,7 +105,7 @@ animations {
 }
 
 // ------------------------------------------------------------
-// Startup
+// Startup Applications
 // ------------------------------------------------------------
 spawn-at-startup "waybar"
 spawn-at-startup "mako"
@@ -115,38 +117,38 @@ spawn-at-startup "/home/niru/.local/bin/niri-idle-start.sh"
 // Window Rules
 // ------------------------------------------------------------
 
-// Float common dialog windows
+// Float common utility dialogs
 window-rule {
   match app-id=r#"^(pavucontrol|nm-connection-editor|blueman-manager|gnome-calculator|galculator)$"#
   open-floating true
 }
 
-// Float file pickers and save dialogs
+// Float file chooser and save dialogs
 window-rule {
   match title=r#"^(Open|Save|Save As|File Chooser|Open File|Open Folder).*"#
   open-floating true
 }
 
-// Float PCManFM when opened as a picker
+// Float PCManFM when used as a file picker
 window-rule {
   match app-id="pcmanfm"
   match title="Open Files"
   open-floating true
 }
 
-// Float wofi (launcher)
+// Float wofi application launcher
 window-rule {
   match app-id="wofi"
   open-floating true
 }
 
-// Float swaylock (shouldn't tile)
+// Float swaylock — should never tile
 window-rule {
   match app-id="swaylock"
   open-floating true
 }
 
-// Float pinentry (GPG password prompts)
+// Float pinentry dialogs (GPG password prompts)
 window-rule {
   match app-id=r#"^pinentry.*"#
   open-floating true
@@ -156,67 +158,89 @@ window-rule {
 // Keybindings
 // ------------------------------------------------------------
 binds {
-  // =========================
+  // ----------------------------------------------------------
   // Launchers
-  // =========================
+  // ----------------------------------------------------------
   Mod+Return       { spawn "alacritty"; }
   Mod+Shift+Return { spawn "foot"; }
-  Mod+B            { spawn "brave"; }
+  Mod+B            { spawn "brave-wayland"; }
   Mod+P            { spawn "wofi" "--show" "drun"; }
   Mod+Shift+P      { spawn "wofi" "--show" "run"; }
   Mod+Shift+F      { spawn "pcmanfm"; }
   XF86Display      { spawn "wdisplays"; }
-  
-  // =========================
-  // Window management
-  // =========================
+
+  // ----------------------------------------------------------
+  // Window Management
+  // ----------------------------------------------------------
   Mod+Q { close-window; }
 
-  // Focus navigation (DWM-ish)
+  // Focus navigation (hjkl, DWM-style)
   Mod+J { focus-window-down; }
   Mod+K { focus-window-up; }
   Mod+H { focus-column-left; }
   Mod+L { focus-column-right; }
 
-  // Arrow keys as alternative
+  // Focus navigation (arrow keys)
   Mod+Left  { focus-column-left; }
   Mod+Right { focus-column-right; }
   Mod+Up    { focus-window-up; }
   Mod+Down  { focus-window-down; }
 
-  // Move windows/columns
+  // Move windows and columns (hjkl)
   Mod+Shift+J { move-window-down; }
   Mod+Shift+K { move-window-up; }
   Mod+Shift+H { move-column-left; }
   Mod+Shift+L { move-column-right; }
 
+  // Move windows and columns (arrow keys)
   Mod+Shift+Left  { move-column-left; }
   Mod+Shift+Right { move-column-right; }
   Mod+Shift+Up    { move-window-up; }
   Mod+Shift+Down  { move-window-down; }
 
-  // Column width
+  // Adjust column width
   Mod+Minus { set-column-width "-5%"; }
   Mod+Equal { set-column-width "+5%"; }
 
-  // Window height
+  // Adjust window height
   Mod+Shift+Minus { set-window-height "-5%"; }
   Mod+Shift+Equal { set-window-height "+5%"; }
 
-  // Fullscreen / floating / presets
-  Mod+F            { maximize-column; }
-  Mod+M            { fullscreen-window; }
-  Mod+Shift+Space  { toggle-window-floating; }
-  Mod+Space        { switch-preset-column-width; }
+  // Fullscreen, floating, and column width presets
+  Mod+F           { maximize-column; }
+  Mod+M           { fullscreen-window; }
+  Mod+Shift+Space { toggle-window-floating; }
+  Mod+Space       { switch-preset-column-width; }
 
-  // Column operations
+  // Column stack operations (consume / expel)
   Mod+C { consume-window-into-column; }
   Mod+E { expel-window-from-column; }
 
-  // Workspace navigation
+  // ----------------------------------------------------------
+  // Workspace Navigation
+  // ----------------------------------------------------------
+
+  // Switch workspace up / down (vertical)
+  Mod+Ctrl+K hotkey-overlay-title="Switch Workspace Up"   { focus-workspace-up; }
+  Mod+Ctrl+J hotkey-overlay-title="Switch Workspace Down" { focus-workspace-down; }
+
+  // Move column to workspace up / down
+  Mod+Ctrl+Shift+K hotkey-overlay-title="Move Column to Workspace Up"   { move-column-to-workspace-up; }
+  Mod+Ctrl+Shift+J hotkey-overlay-title="Move Column to Workspace Down" { move-column-to-workspace-down; }
+
+  // Consume or expel window sideways within a column
+  Mod+Ctrl+H hotkey-overlay-title="Consume or Expel Window Left"  { consume-or-expel-window-left; }
+  Mod+Ctrl+L hotkey-overlay-title="Consume or Expel Window Right" { consume-or-expel-window-right; }
+
+  // Toggle focus between floating and tiling layers
+  Mod+Ctrl+Space hotkey-overlay-title="Switch Focus Floating/Tiling" {
+    switch-focus-between-floating-and-tiling;
+  }
+
+  // Jump to previously focused workspace
   Mod+Tab { focus-workspace-previous; }
 
-  // Workspaces 1-9
+  // Switch to workspace by number
   Mod+1 { focus-workspace 1; }
   Mod+2 { focus-workspace 2; }
   Mod+3 { focus-workspace 3; }
@@ -227,7 +251,7 @@ binds {
   Mod+8 { focus-workspace 8; }
   Mod+9 { focus-workspace 9; }
 
-  // Send window to workspace
+  // Move active window to workspace by number
   Mod+Shift+1 { move-window-to-workspace 1; }
   Mod+Shift+2 { move-window-to-workspace 2; }
   Mod+Shift+3 { move-window-to-workspace 3; }
@@ -238,93 +262,105 @@ binds {
   Mod+Shift+8 { move-window-to-workspace 8; }
   Mod+Shift+9 { move-window-to-workspace 9; }
 
-  // Monitor/output
+  // ----------------------------------------------------------
+  // Monitor / Output Management
+  // ----------------------------------------------------------
+
+  // Focus monitor by direction
   Mod+Comma        { focus-monitor-left; }
   Mod+Period       { focus-monitor-right; }
+
+  // Move window to adjacent monitor
   Mod+Shift+Comma  { move-window-to-monitor-left; }
   Mod+Shift+Period { move-window-to-monitor-right; }
 
-  // System / security
-  Mod+Escape       { spawn "swaylock" "-f" "-c" "000000"; }
-  Mod+Shift+Escape { spawn "systemctl" "suspend"; }
-
-  // Lock screen (cannot be inhibited by fullscreen apps)
-  Super+Alt+L allow-inhibiting=false { spawn "swaylock" "-f" "-c" "000000"; }
-
-  // Screenshots
-  Print       { screenshot; }
-  Shift+Print { screenshot-screen; }
-  Mod+Print   { screenshot-window; }
-
-  // Audio (PipeWire/wpctl)
-  XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; }
-  XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
-  XF86AudioMute        { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-  XF86AudioMicMute     { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
-
-  // Media
-  XF86AudioPlay  { spawn "playerctl" "play-pause"; }
-  XF86AudioPause { spawn "playerctl" "play-pause"; }
-  XF86AudioNext  { spawn "playerctl" "next"; }
-  XF86AudioPrev  { spawn "playerctl" "previous"; }
-
-  // Brightness
-  XF86MonBrightnessUp   { spawn "brightnessctl" "set" "+5%"; }
-  XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
-
-  // =========================
-  // Overview / layout helpers
-  // =========================
-
-  // Workspace overview
-  Mod+O { toggle-overview; }
-
-  // Toggle tabbed display for current column
-  Mod+W { toggle-column-tabbed-display; }
-
-  // Swap window left/right
-  Mod+Alt+H { swap-window-left; }
-  Mod+Alt+L { swap-window-right; }
-
-  // Preset window heights
-  Mod+Shift+R { switch-preset-window-height; }
-
-  // Expand column to available width
-  Mod+Ctrl+F { expand-column-to-available-width; }
-
-  // Center visible columns
-  Mod+Ctrl+C { center-visible-columns; }
-
-  // =========================
-  // Wallpaper rotation
-  // =========================
-  Mod+Shift+W { spawn "bash" "-lc" "~/.local/bin/niri-wallpaper-rotate.sh"; }
-
-  // =========================
-  // Safety / utility
-  // =========================
-
-  // Toggle keyboard shortcut inhibit
-  Mod+Pause { toggle-keyboard-shortcuts-inhibit; }
-
-  // DPMS control
-  Mod+Shift+BackSpace { power-off-monitors; }
-
-  // Quit niri
-  Mod+Shift+Q { quit; }
-
-  // Hotkey overlay
-  Mod+Shift+Slash { show-hotkey-overlay; }
-  
-  // ------------------------------------------------------------
-  // Monitor cycling (always works, layout independent)
-  // ------------------------------------------------------------
-
-  // Focus next / previous monitor
+  // Cycle focus through monitors
   Mod+Ctrl+Period { focus-monitor-next; }
   Mod+Ctrl+Comma  { focus-monitor-previous; }
 
   // Move window to next / previous monitor
   Mod+Ctrl+Shift+Period { move-window-to-monitor-next; }
   Mod+Ctrl+Shift+Comma  { move-window-to-monitor-previous; }
+
+  // ----------------------------------------------------------
+  // Layout Helpers and Overview
+  // ----------------------------------------------------------
+
+  // Toggle workspace overview
+  Mod+O { toggle-overview; }
+
+  // Toggle tabbed display for the current column
+  Mod+W { toggle-column-tabbed-display; }
+
+  // Swap active window with neighbour
+  Mod+Alt+H { swap-window-left; }
+  Mod+Alt+L { swap-window-right; }
+
+  // Cycle through preset window heights
+  Mod+Shift+R { switch-preset-window-height; }
+
+  // Expand column to fill all available width
+  Mod+Ctrl+F { expand-column-to-available-width; }
+
+  // Center all visible columns on screen
+  Mod+Ctrl+C { center-visible-columns; }
+
+  // ----------------------------------------------------------
+  // Wallpaper
+  // ----------------------------------------------------------
+  Mod+Shift+W { spawn "bash" "-lc" "~/.local/bin/niri-wallpaper-rotate.sh"; }
+
+  // ----------------------------------------------------------
+  // Screenshots
+  // ----------------------------------------------------------
+  Print       { screenshot; }
+  Shift+Print { screenshot-screen; }
+  Mod+Print   { screenshot-window; }
+
+  // ----------------------------------------------------------
+  // Audio (PipeWire via wpctl)
+  // ----------------------------------------------------------
+  XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+  XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+  XF86AudioMute        { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+  XF86AudioMicMute     { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+
+  // ----------------------------------------------------------
+  // Media Playback (playerctl)
+  // ----------------------------------------------------------
+  XF86AudioPlay  { spawn "playerctl" "play-pause"; }
+  XF86AudioPause { spawn "playerctl" "play-pause"; }
+  XF86AudioNext  { spawn "playerctl" "next"; }
+  XF86AudioPrev  { spawn "playerctl" "previous"; }
+
+  // ----------------------------------------------------------
+  // Display Brightness (brightnessctl)
+  // ----------------------------------------------------------
+  XF86MonBrightnessUp   { spawn "brightnessctl" "set" "+5%"; }
+  XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
+
+  // ----------------------------------------------------------
+  // System and Session
+  // ----------------------------------------------------------
+
+  // Lock screen
+  Mod+Escape { spawn "swaylock" "-f" "-c" "000000"; }
+
+  // Lock screen — cannot be inhibited by fullscreen applications
+  Super+Alt+Shift+L allow-inhibiting=false { spawn "swaylock" "-f" "-c" "000000"; }
+
+  // Suspend the system
+  Mod+Shift+Escape { spawn "systemctl" "suspend"; }
+
+  // Turn off all monitors (DPMS off)
+  Mod+Shift+BackSpace { power-off-monitors; }
+
+  // Toggle keyboard shortcut inhibit (for games / nested compositors)
+  Mod+Pause { toggle-keyboard-shortcuts-inhibit; }
+
+  // Show the hotkey overlay
+  Mod+Shift+B { show-hotkey-overlay; }
+
+  // Quit niri
+  Mod+Shift+Q { quit; }
 }
