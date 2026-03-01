@@ -111,8 +111,8 @@ spawn-at-startup "waybar"
 spawn-at-startup "mako"
 spawn-at-startup "bash" "-lc" "~/.local/bin/niri-wallpaper.sh"
 spawn-at-startup "bash" "-lc" "sleep 1 && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri"
-spawn-at-startup "/home/niru/.local/bin/niri-idle-start.sh"
-spawn-at-startup "sleep 1 && nextcloud"
+spawn-at-startup "~/.local/bin/niri-idle-start.sh"
+spawn-at-startup "nextcloud"
 
 // ------------------------------------------------------------
 // Window Rules
