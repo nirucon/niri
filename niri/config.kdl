@@ -29,6 +29,8 @@ environment {
 // Input Devices
 // ------------------------------------------------------------
 input {
+  focus-follows-mouse
+
   keyboard {
     xkb {
       layout "se"
