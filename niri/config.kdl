@@ -70,6 +70,20 @@ output "eDP-1" {
   position x=0 y=0
 }
 
+// othala workstation custom
+output "HP Inc. HP E27q G4 CNK119218J" {
+  mode "2560x1440@59.951"
+  scale 1
+  position x=0 y=0
+  transform "180"
+}
+
+output "HP Inc. HP E27q G5 CNC4192MRJ" {
+  mode "2560x1440@59.951"
+  scale 1
+  position x=0 y=1440
+}
+
 // ------------------------------------------------------------
 // Layout and Appearance
 // ------------------------------------------------------------
